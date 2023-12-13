@@ -1,0 +1,3 @@
+* Three implementation models for scheme (by R. K. Dybvig)
+
+- https://dl.acm.org/doi/10.5555/37555
