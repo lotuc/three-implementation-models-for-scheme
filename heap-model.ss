@@ -1,3 +1,17 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; utility
+
+(define-syntax record
+  (lambda (x)
+    (syntax-case x ()
+      [(_ val (var ...) exp ...)
+       #'(apply (lambda (var ...) exp ...) val)])))
+
+(record '(1 2 39) (a b c) (+ a b c))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; environment extend & lookup
+
 (define (lookup var e)
   (let nxtrib ([e e])
     (let nxtelt ([vars (caar e)]
@@ -10,11 +24,13 @@
 (define (extend env vars vals)
   (cons (cons vars vals) env))
 
-(define trace-compile #f)
-(define trace-vm #f)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; compile
 
 (define (tail? next)
   (eq? (car next) 'return))
+
+(define trace-compile #f)
 
 (define (compile x next)
   (when trace-compile (display (format "compile: ~s\n" x)))
@@ -40,39 +56,18 @@
                         (compile (car args) `(argument ,c)))))])]
    [else `(constant ,x ,next)]))
 
-(equal? '(constant 42 (halt))
-        (compile '42 '(halt)))
-(equal? '(refer a (halt))
-        (compile 'a '(halt)))
-(equal? '(constant 1 (halt))
-        (compile '(quote 1) '(halt)))
-(equal? '(close (x) (refer x (return))
-                (halt))
-        (compile '(lambda (x) x) '(halt)))
-(equal? '(constant #t (test (constant 42 (halt))
-                            (constant 24 (halt))))
-        (compile '(if #t 42 24) '(halt)))
-(equal? '(constant 1 (assign x (halt)))
-        (compile '(set! x 1) '(halt)))
-(equal? '(frame (halt) (conti (argument (close (k)
-                                               (constant 1 (return))
-                                               (apply)))))
-        (compile '(call/cc (lambda (k) 1)) '(halt)))
-(equal? '(frame (halt) (constant 5 (argument (close (x)
-                                                    (refer x (return))
-                                                    (apply)))))
-        (compile '((lambda (x) x) 5) '(halt)))
+(set! trace-compile #t)
+(compile '42 '(halt))
+(compile 'a '(halt))
+(compile '(quote 1) '(halt))
+(compile '(lambda (x) x) '(halt))
+(compile '(if #t 42 24) '(halt))
+(compile '(set! x 1) '(halt))
+(compile '(call/cc (lambda (k) 1)) '(halt))
+(compile '((lambda (x) x) 5) '(halt))
 
-
-;;;
-
-(define-syntax record
-  (lambda (x)
-    (syntax-case x ()
-      [(_ val (var ...) exp ...)
-       #'(apply (lambda (var ...) exp ...) val)])))
-
-;; (record '(1 2 39) (a b c) (+ a b c))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; VM
 
 (define (closure body env vars)
   (list body env vars))
@@ -82,6 +77,8 @@
 
 (define (call-frame exp env rib stack)
   (list exp env rib stack))
+
+(define trace-vm #f)
 
 (define (VM a x e r s)
   (when trace-vm (print (format "> a: ~s, x: ~s, e: ~s, r: ~s, s: ~s\n" a x e r s)))
@@ -190,34 +187,37 @@
 ;;; - replace e(x)pression with frame-x and continue
 (VM 'prev-exp '(frame (halt) (constant 42 (halt))) 'env 'rib 'stack)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; eval
 
-(define (exec exp env)
+(define (evaluate exp env)
   (VM -1 (compile exp '(halt)) env '() '()))
 
-(exec '((lambda (x) x) 42) '())
-(exec '((lambda (x y) y) 42 24) '())
-(exec '((lambda (x) ((lambda (_) x) (set! x 42))) 0) '())
-(exec '(if #t 4 2) '())
-(exec '(if #f 4 2) '())
+(evaluate '((lambda (x) x) 42) '())
+(evaluate '((lambda (x y) y) 42 24) '())
+(evaluate '((lambda (x) ((lambda (_) x) (set! x 42))) 0) '())
+(evaluate '(if #t 4 2) '())
+(evaluate '(if #f 4 2) '())
 
-(exec '(call/cc (lambda (k) 10)) '())
-(exec '(call/cc (lambda (k) (k 10))) '())
-(exec '(call/cc (lambda (k) ((lambda (x) (k x)) 20))) '())
+(evaluate '(call/cc (lambda (k) 10)) '())
+(evaluate '(call/cc (lambda (k) (k 10))) '())
+(evaluate '(call/cc (lambda (k) ((lambda (x) (k x)) 20))) '())
 
 (define scheme-env (extend '() '(= + - * /) `(,= ,+ ,- ,* ,/)))
-(exec '(= 1 1) scheme-env)
-(exec '((lambda (x y) (+ x y)) 1 2) scheme-env)
+
+(evaluate '(= 1 1) scheme-env)
+(evaluate '((lambda (x y) (+ x y)) 1 2) scheme-env)
 
 (set! trace-compile #f)
 (set! trace-vm #f)
 ;; Y combinator
-(exec '(((lambda (h)
-           ((lambda (f) (f f))
-            (lambda (f) (h (lambda (n) ((f f) n))))))
-         (lambda (fact)
-           (lambda (n)
-             (if (= n 0)
-                 1
-                 (* n (fact (- n 1)))))))
-        10)
-      scheme-env)
+(evaluate '(((lambda (h)
+               ((lambda (f) (f f))
+                (lambda (f) (h (lambda (n) ((f f) n))))))
+             (lambda (fact)
+               (lambda (n)
+                 (if (= n 0)
+                     1
+                     (* n (fact (- n 1)))))))
+            10)
+          scheme-env)
