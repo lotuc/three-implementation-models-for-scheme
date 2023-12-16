@@ -81,7 +81,7 @@
 (define trace-vm #f)
 
 (define (VM a x e r s)
-  (when trace-vm (print (format "> a: ~s, x: ~s, e: ~s, r: ~s, s: ~s\n" a x e r s)))
+  (when trace-vm (display (format "> a: ~s, x: ~s, e: ~s, r: ~s, s: ~s\n" a x e r s)))
   (record-case x
     [(halt) () a]
     [(refer) (var x) (VM (car (lookup var e)) x e r s)]
