@@ -203,21 +203,49 @@
 (evaluate '(call/cc (lambda (k) (k 10))) '())
 (evaluate '(call/cc (lambda (k) ((lambda (x) (k x)) 20))) '())
 
-(define scheme-env (extend '() '(= + - * /) `(,= ,+ ,- ,* ,/)))
+(define scheme-env (extend '()
+                           '(= + - * / car cdr null?)
+                           `(,= ,+ ,- ,* ,/ ,car ,cdr ,null?)))
 
 (evaluate '(= 1 1) scheme-env)
 (evaluate '((lambda (x y) (+ x y)) 1 2) scheme-env)
 
 (set! trace-compile #f)
 (set! trace-vm #f)
-;; Y combinator
-(evaluate '(((lambda (h)
-               ((lambda (f) (f f))
-                (lambda (f) (h (lambda (n) ((f f) n))))))
-             (lambda (fact)
-               (lambda (n)
-                 (if (= n 0)
-                     1
-                     (* n (fact (- n 1)))))))
-            10)
+
+;; recursive with Y combinator
+
+(evaluate '((lambda (h)
+              ((h (lambda (fact)
+                    (lambda (n)
+                      (if (= n 0)
+                          1
+                          (* n (fact (- n 1)))))))
+               10))
+            (lambda (h)
+              ((lambda (f) (f f))
+               (lambda (f) (h (lambda (n) ((f f) n)))))))
+          scheme-env)
+
+(evaluate '((lambda (h)
+              (((lambda (lst)
+                  (lambda (n)
+                    (call/cc
+                     (lambda (k)
+                       (((h (lambda (mul)
+                              (lambda (lst)
+                                (lambda (n)
+                                  (if (null? lst)
+                                      n
+                                      (if (= 0 (car lst))
+                                          (k n)
+                                          ((mul (cdr lst))
+                                           (* n (car lst)))))))))
+                         lst)
+                        n)))))
+                '(1 2 3 4 5 6 0 8 9))
+               1))
+            (lambda (h)
+              ((lambda (f) (f f))
+               (lambda (f) (h (lambda (n) ((f f) n)))))))
           scheme-env)
