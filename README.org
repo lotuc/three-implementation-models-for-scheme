@@ -10,4 +10,4 @@ Source index:
   - 3.5 Improving Variable Access: [[file:s/heap-based-model-improving-variable-access.ss][src]]
 - Chapter 4
   - 4.1 Stack-Based Implementation of Block-Structured Languages: [[file:s/stack-based-implementation-of-block-structured-language.ss][src]]
-  - 4.2 Stack Allocating the Dynamic Chain: [[file:s/stack-allocating-the-stack-chain.ss][src]]
+  - 4.2 Stack Allocating the Dynamic Chain: [[file:s/stack-allocating-the-dynamic-chain.ss][src]]
