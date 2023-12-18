@@ -11,3 +11,5 @@ Source index:
 - Chapter 4
   - 4.1 Stack-Based Implementation of Block-Structured Languages: [[file:s/stack-based-implementation-of-block-structured-language.ss][src]]
   - 4.2 Stack Allocating the Dynamic Chain: [[file:s/stack-allocating-the-dynamic-chain.ss][src]]
+  - 4.3 Stack Allocating the Static Chain
+    - 4.3.1 Including Variable Values in the Call Frame: [[file:s/stack-allocating-the-static-chain-1.ss][src]]
