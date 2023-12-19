@@ -12,3 +12,4 @@ Source index:
   - 4.1 Stack-Based Implementation of Block-Structured Languages: [[file:s/4.1-stack-based-implementation-of-block-structured-language.ss][src]]
   - 4.2 Stack Allocating the Dynamic Chain: [[file:s/4.2-stack-allocating-the-dynamic-chain.ss][src]]
   - 4.3 Stack Allocating the Static Chain: [[file:s/4.3-stack-allocating-the-static-chain.ss][src]]
+  - 4.4 Display Closures: [[file:s/4.4-display-closures.ss][src]]
