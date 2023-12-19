@@ -4,12 +4,11 @@ The paper link: https://dl.acm.org/doi/10.5555/37555
 
 Source index:
 - Chapter 2
-  - 2.5 A Meta-Circula Interpreter: [[file:s/meta-circular.ss][src]]
+  - 2.5 A Meta-Circula Interpreter: [[file:s/2.5-meta-circular.ss][src]]
 - Chapter 3
-  - 3.4 Implementing the Heap-Based Model: [[file:s/heap-based-model.ss][src]]
-  - 3.5 Improving Variable Access: [[file:s/heap-based-model-improving-variable-access.ss][src]]
+  - 3.4 Implementing the Heap-Based Model: [[file:s/3.4-heap-based-model.ss][src]]
+  - 3.5 Improving Variable Access: [[file:s/3.5-heap-based-model-improving-variable-access.ss][src]]
 - Chapter 4
-  - 4.1 Stack-Based Implementation of Block-Structured Languages: [[file:s/stack-based-implementation-of-block-structured-language.ss][src]]
-  - 4.2 Stack Allocating the Dynamic Chain: [[file:s/stack-allocating-the-dynamic-chain.ss][src]]
-  - 4.3 Stack Allocating the Static Chain
-    - 4.3.1 Including Variable Values in the Call Frame: [[file:s/stack-allocating-the-static-chain-1.ss][src]]
+  - 4.1 Stack-Based Implementation of Block-Structured Languages: [[file:s/4.1-stack-based-implementation-of-block-structured-language.ss][src]]
+  - 4.2 Stack Allocating the Dynamic Chain: [[file:s/4.2-stack-allocating-the-dynamic-chain.ss][src]]
+  - 4.3 Stack Allocating the Static Chain: [[file:s/4.3-stack-allocating-the-static-chain.ss][src]]
