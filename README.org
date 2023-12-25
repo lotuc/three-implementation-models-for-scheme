@@ -14,3 +14,4 @@ Source index:
   - 4.3 Stack Allocating the Static Chain: [[file:s/4.3-stack-allocating-the-static-chain.ss][src]]
   - 4.4 Display Closures: [[file:s/4.4-display-closures.ss][src]]
   - 4.5 Supporting Assignments: [[file:s/4.5-supporting-assignments.ss][src]]
+  - 4.6 Tail Calls: [[file:s/4.6-tail-calls.ss][src]]
